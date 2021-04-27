@@ -26,5 +26,4 @@ FeedbackOptions.propTypes = {
   options: PropTypes.array.isRequired,
 };
 
-
 export default FeedbackOptions;

@@ -11,52 +11,46 @@ class Feedback extends React.Component {
     good: 0,
     neutral: 0,
     bad: 0,
-    total: 0,
-    positivePercentage: 0,
-    visible: false,
   };
   onLeaveFeedback = event => {
-    this.show();
     const { name } = event.target;
 
     if (name === 'good') {
-      this.setState(({good}) => ({ good: good + 1 }));
+      this.setState(({ good }) => ({ good: good + 1 }));
     }
     if (name === 'neutral') {
-      this.setState(({neutral}) => ({ neutral: neutral + 1 }));
+      this.setState(({ neutral }) => ({ neutral: neutral + 1 }));
     }
     if (name === 'bad') {
-      this.setState(({bad}) => ({ bad: bad + 1 }));
+      this.setState(({ bad }) => ({ bad: bad + 1 }));
     }
-    this.countTotalFeedback();
-    this.countPositiveFeedbackPercentage();
   };
   countTotalFeedback = () => {
-    this.setState(({ good, bad, neutral }) => ({
-      total: good + bad + neutral,
-    }));
+    const { good, bad, neutral } = this.state;
+    return good + bad + neutral;
   };
 
-  countPositiveFeedbackPercentage = () => {
-    this.setState(({ total, good }) => ({
-      positivePercentage: Math.round((100 / total) * good),
-    }));
-  };
-  show = () => {
-    this.setState({ visible: true });
+  countPositiveFeedbackPercentage = (total, good) => {
+    return Math.round((100 / total) * good);
   };
 
   render() {
-    const {good, neutral, bad, total, positivePercentage, visible} = this.state
+    const { good, neutral, bad } = this.state;
+    const total = this.countTotalFeedback();
+    const positivePercentage = this.countPositiveFeedbackPercentage(
+      total,
+      good,
+    );
+    const stateKeys = Object.keys(this.state);
     return (
       <section className="Feedback">
         <h1>Please leave feedback</h1>
         <FeedbackOptions
-          options={['good', 'neutral', 'bad']}
+          options={stateKeys}
           onLeaveFeedback={this.onLeaveFeedback}
         />
         <h2>Statistics</h2>
-        {visible ? (
+        {total ? (
           <Statistics
             good={good}
             neutral={neutral}
@@ -71,21 +65,18 @@ class Feedback extends React.Component {
     );
   }
 }
-Feedback.propTypes= {
+Feedback.propTypes = {
   state: PropTypes.shape({
     good: PropTypes.number,
     neutral: PropTypes.number,
     bad: PropTypes.number,
-    total: PropTypes.number,
-    positivePercentage: PropTypes.number,
-    visible: PropTypes.bool,
   }),
-
-    onLeaveFeedback: PropTypes.func,
-    show: PropTypes.func,
-    countPositiveFeedbackPercentage: PropTypes.func,
-    countTotalFeedback: PropTypes.func,
-}
-
+  total: PropTypes.number,
+  positivePercentage: PropTypes.number,
+  onLeaveFeedback: PropTypes.func,
+  show: PropTypes.func,
+  countPositiveFeedbackPercentage: PropTypes.func,
+  countTotalFeedback: PropTypes.func,
+};
 
 export default Feedback;
